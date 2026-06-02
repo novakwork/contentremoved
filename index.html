@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Content Removed</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500&family=Space+Mono:wght@400;700&family=IBM+Plex+Mono:wght@300;400;500&display=swap');
+  :root{
+    --bg:#ffffff; --fg:#000000; --dim:#444444;
+    --accent:#7a7a7a; --restored:#00af00;
+    --counter:#f50000; --unit:#232323;
+    --line:#44444433;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{font-size:16px;}
+  html,body{background:var(--bg);color:var(--fg);
+    font-family:'JetBrains Mono', monospace;font-weight:300;-webkit-font-smoothing:antialiased;}
+  body{min-height:100vh;padding:7vh 6vw 12vh;line-height:1.5;}
+  header{margin-bottom:5vh;border-bottom:1px solid var(--line);padding-bottom:2rem;}
+  h1{font-size:1.75rem;font-weight:400;letter-spacing:.4em;text-transform:uppercase;}
+  .intro{margin-top:1rem;font-size:.72rem;color:var(--dim);letter-spacing:.06em;
+    line-height:1.8;max-width:62ch;}
+  .total{margin-top:1.4rem;font-size:.66rem;color:var(--accent);letter-spacing:.14em;}
+
+  /* view toggle — desktop only */
+  .viewbar{margin-top:1.6rem;display:flex;gap:.5rem;}
+  .viewbar button{font-family:inherit;font-size:.56rem;letter-spacing:.16em;
+    text-transform:uppercase;cursor:pointer;background:transparent;
+    border:1px solid var(--line);color:var(--dim);padding:.4rem .8rem;
+    border-radius:2px;transition:.2s;}
+  .viewbar button:hover{color:var(--fg);}
+  .viewbar button.on{border-color:var(--accent);color:var(--accent);}
+  .viewbar select{font-family:inherit;font-size:.56rem;letter-spacing:.12em;
+    text-transform:uppercase;cursor:pointer;background:transparent;
+    border:1px solid var(--line);color:var(--dim);padding:.4rem .6rem;
+    border-radius:2px;}
+  .viewbar select:focus{outline:none;border-color:var(--accent);color:var(--fg);}
+  .viewbar select option{background:var(--bg);color:var(--fg);}
+
+  /* list = single column; tiles = 3-col grid */
+  .list{display:flex;flex-direction:column;margin-top:3vh;}
+  .list.tiles{display:grid;grid-template-columns:repeat(3,1fr);
+    gap:0 3.2rem;}
+
+  .entry{padding:2.6rem 0;border-bottom:1px solid var(--line);
+    opacity:0;animation:rise .9s cubic-bezier(.2,.6,.2,1) forwards;}
+
+  @keyframes rise{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+  /* entry code heading */
+  .ecode{font-size:.62rem;letter-spacing:.26em;text-transform:uppercase;
+    color:var(--accent);margin-bottom:.5rem;}
+  .esubtitle{font-size:1.2rem;font-weight:400;color:var(--fg);
+    margin-bottom:.35rem;line-height:1.4;}
+  .ecode + .esubtitle{margin-top:.1rem;}
+  .eentity{font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--dim);margin-bottom:1rem;}
+  .ecode + .eentity{margin-top:.1rem;}
+
+  /* every block stacks vertically — one inline column */
+  .url{display:inline-block;font-size:.82rem;font-weight:400;color:var(--fg);
+    text-decoration:underline;text-underline-offset:3px;
+    word-break:break-all;transition:.4s;}
+  .url:hover{color:var(--accent);}
+  .mech{display:block;margin-top:.7rem;font-size:.58rem;letter-spacing:.18em;
+    text-transform:uppercase;color:var(--accent);}
+
+  /* single-line counter — large, alive */
+  .counter{font-size:2.05rem;font-weight:300;line-height:1;
+    color:var(--counter);font-variant-numeric:tabular-nums;letter-spacing:.012em;
+    white-space:nowrap;}
+  .counter .u{font-size:.95rem;color:var(--unit);margin:0 .5rem 0 .12rem;}
+  .counter .seg{display:inline-block;}
+  /* tiles are narrower — scale the counter down so it stays on one line */
+  .list.tiles .counter{font-size:1.5rem;}
+  .list.tiles .counter .u{font-size:.72rem;margin:0 .32rem 0 .1rem;}
+  /* tile row gap — bottom padding of each entry in tiles mode */
+  .list.tiles .entry{padding-bottom:6.4rem;}
+  .clabel{margin-top:1.4rem;margin-bottom:.4rem;font-size:.58rem;color:var(--dim);
+    letter-spacing:.22em;text-transform:uppercase;}
+
+  .note, .summary{margin-top:1.5rem;font-size:.72rem;color:var(--fg);opacity:.85;
+    max-width:48ch;line-height:1.7;}
+  .note .nlabel, .summary .nlabel{display:block;font-size:.56rem;color:var(--dim);
+    letter-spacing:.2em;text-transform:uppercase;margin-bottom:.35rem;}
+
+  .snap{margin-top:0;margin-bottom:1.6rem;}
+  .snap img{max-width:260px;width:100%;border:1px solid var(--line);
+    border-radius:2px;cursor:zoom-in;display:block;transition:border-color .3s;}
+  .snap img:hover{border-color:var(--accent);}
+  .snap .scap{margin-top:.4rem;font-size:.54rem;color:var(--dim);
+    letter-spacing:.14em;text-transform:uppercase;}
+
+  .seen{font-size:.64rem;color:var(--dim);letter-spacing:.08em;margin-top:1.4rem;}
+  .seen-label{display:block;text-transform:uppercase;letter-spacing:.22em;
+    font-size:.58rem;color:var(--dim);}
+  .seen-dates{display:block;margin-top:.3rem;color:var(--fg);opacity:.7;}
+  .seen-wb{display:block;margin-top:.3rem;color:var(--dim);
+    text-decoration:underline;text-underline-offset:3px;}
+  .seen-wb:hover{color:var(--accent);}
+
+  .entry.restored .counter{color:var(--restored);}
+  .entry.restored .mech{color:var(--restored);}
+  .entry.restored .clabel{color:var(--restored);}
+  .entry.restored .ecode{color:var(--restored);}
+  
+  .entry.age-1 .counter{opacity:.82;}
+  .entry.age-2 .counter{opacity:.62;}
+  .entry.age-3 .counter{opacity:.44;}
+  .entry.age-4 .counter{opacity:.3;}
+
+  footer{margin-top:10vh;font-size:.7rem;color:var(--dim);
+    letter-spacing:.02em;}
+  footer .footline a{color:var(--dim);text-decoration:underline;
+    text-underline-offset:3px;}
+  footer .footline a:hover{color:var(--accent);}
+
+  /* lightbox */
+  .lb{position:fixed;inset:0;background:rgba(0,0,0,.94);display:none;
+    align-items:center;justify-content:center;padding:5vh 5vw;cursor:zoom-out;z-index:50;}
+  .lb.open{display:flex;}
+  .lb img{max-width:100%;max-height:100%;border:1px solid var(--line);}
+
+  /* mobile — always single column, no tiles, no toggle */
+  @media(max-width:760px){
+    .viewbar{display:none;}
+    .list.tiles{display:flex;flex-direction:column;}
+  }
+  @media(max-width:560px){
+    body{padding:6vh 7vw 12vh;}
+    .counter{font-size:1.7rem;}
+    .counter .u{font-size:.8rem;}
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>Content Removed</h1>
+  <p class="intro">These are U.S. government web pages as they existed before being taken down or edited to erase references to queer communities. Some have been removed entirely, while others remain online with their language narrowed or omitted. A live counter on each entry tracks the time since the page was last present.</p>
+  <div class="total" id="total"></div>
+  <div class="viewbar" id="viewbar">
+    <button data-v="tiles">Tiles</button>
+    <button data-v="list">List</button>
+    <select id="sortbar">
+      <option value="longest">Longest duration</option>
+      <option value="shortest">Shortest duration</option>
+      <option value="az">A–Z</option>
+      <option value="za">Z–A</option>
+      <option value="entity-az">Entity A–Z</option>
+      <option value="entity-za">Entity Z–A</option>
+    </select>
+  </div>
+</header>
+<main class="list" id="list"></main>
+<footer>
+  <div class="footline">A work by <a href="https://www.shannonnovak.com" target="_blank" rel="noopener noreferrer">Shannon Novak</a> documenting queer content removed from the web.</div>
+</footer>
+
+<div class="lb" id="lb"><img id="lb-img" src="" alt=""></div>
+
+<!-- Editable project source — read by the Creator's "Open existing project".
+     Not displayed. Safe to ignore. -->
+<script type="application/json" id="project-data">
+{"format":"content-removed-project","version":2,"settings":{"title":"Content Removed","intro":"These are U.S. government web pages as they existed before being taken down or edited to erase references to queer communities. Some have been removed entirely, while others remain online with their language narrowed or omitted. A live counter on each entry tracks the time since the page was last present.","footer":"A work by Shannon Novak documenting queer content removed from the web.","artist":"Shannon Novak","artistUrl":"https://www.shannonnovak.com","font":"'JetBrains Mono', monospace","colors":{"bg":"#ffffff","fg":"#000000","dim":"#444444","accent":"#7a7a7a","restored":"#00af00","counter":"#f50000","unit":"#232323"},"view":"tiles","textsize":"m","titlesize":1.75,"tilegap":6.4,"decay":true,"cumulative":true},"links":[{"code":"","subtitle":"LGBTQ Pride","entity":"NASA","url":"https://www.nasa.gov/lgbtq-pride","date":"2025-02-02","time":"08:44:04","tag":"","summary":"This page had a \"LGBTQ Pride\" gallery, a video celebrating Pride Month in 2022, links to content related to NASA and LGBTQ Pride, and links to general topics at NASA.","note":"This page has been removed. The URL returns a 404 status code.","wayback":"https://web.archive.org/web/20250202084404/https://www.nasa.gov/lgbtq-pride/","status":"removed","restoredDate":"","restoredTime":"","imageUrl":"","imageName":"NASA LGBTQ Pride 2025 web page before.jpg"},{"code":"","subtitle":"Interpretative Flags","entity":"National Park Service","url":"https://www.nps.gov/ston/learn/photosmultimedia/interpretative-flags.htm","date":"2025-02-12","time":"13:10:41","tag":"","summary":"This page has an image and description of the \"interpretive flag display featuring the rainbow Pride flag\".","note":"The following text has been removed from the image description: rainbow, LGBTQ+. This removal was phased. 13/02/25 LGBTQ changes to LGBQ. 14/02/25 LGBQ changes to LGB. 21/02/25 LGB and rainbow is removed.","wayback":"https://web.archive.org/web/20250212011041/https://www.nps.gov/ston/learn/photosmultimedia/interpretative-flags.htm","status":"removed","restoredDate":"","restoredTime":"","imageUrl":"","imageName":"National Park Service Interpretative Flags 2025 web page before.jpg"},{"code":"","subtitle":"LGBTQ+ Flags","entity":"National Park Service","url":"https://www.nps.gov/articles/000/lgbtq-flags.htm","date":"2025-02-10","time":"16:45:24","tag":"","summary":"This page had an article on \"LGBTQ+ Flags\".","note":"This page has been removed. The URL returns a 404 status code. This removal was phased. 11/02/25 the page is removed and the URL return a \"Page In-Progress\" message.","wayback":"https://web.archive.org/web/20250210164524/https://www.nps.gov/articles/000/lgbtq-flags.htm","status":"removed","restoredDate":"","restoredTime":"","imageUrl":"","imageName":"National Park Service LGBTQ Flags 2025 web page before.jpg"},{"code":"","subtitle":"Marsha P. Johnson","entity":"National Park Service","url":"https://www.nps.gov/people/marsha-p-johnson.htm","date":"2025-02-16","time":"21:10:16","tag":"","summary":"This page had a biography for Marsha P. Johnson, including a photo.","note":"This page has been removed. The URL returns a 404 status code.","wayback":"https://web.archive.org/web/20250216211016/https://www.nps.gov/people/marsha-p-johnson.htm","status":"removed","restoredDate":"","restoredTime":"","imageUrl":"","imageName":"National Park Service Marsha P Johnson 2025 web page before.jpg"},{"code":"","subtitle":"A place for everyone","entity":"U.S. Army","url":"https://www.army.mil/article/276642/a_place_for_everyone","date":"2025-02-03","time":"10:18:39","tag":"","summary":"This page had an article celebrating Pride Month in 2024 and links to related stories. The article included text and photos on Marsha P. Johnson and queer advocates working in the US government.","note":"This page has been removed. The URL returns a 404 status code.","wayback":"https://web.archive.org/web/20250203101839/https://www.army.mil/article/276642/a_place_for_everyone","status":"removed","restoredDate":"","restoredTime":"","imageUrl":"","imageName":"US Army A Place For Everyone 2025 web page before.jpg"},{"code":"","subtitle":"Sexual Orientation & Gender Identity (SOGI)","entity":"United States Census Bureau","url":"https://www.census.gov/topics/population/sexual-orientation-gender-identity.html","date":"2025-02-01","time":"00:38:19","tag":"","summary":"This page described and had a link to the \"Sexual Orientation and Gender Identity (SOGI) Data Action Plan\", related articles, general news, general stories, a related visualisation, related working papers, and other subtopics.","note":"This page has been removed. The URL returns a 404 status code.","wayback":"https://web.archive.org/web/20250201003819/https://www.census.gov/topics/population/sexual-orientation-gender-identity.html","status":"removed","restoredDate":"","restoredTime":"","imageUrl":"","imageName":"US Census Bureau SOGI 2025 web page before.jpg"},{"code":"","subtitle":"LGBTQI+ Working Group","entity":"U.S. Department of Justice","url":"https://www.justice.gov/crt/lgbtqi-working-group","date":"2025-01-23","time":"21:30:42","tag":"","summary":"This page provided information on a \"LGBTQI+ Working Group\" that was part of the Civil Rights Division of the U.S. Department of Justice.","note":"This page has been removed. The URL returns a 404 status code.","wayback":"https://web.archive.org/web/20250123213042/https://www.justice.gov/crt/lgbtqi-working-group","status":"removed","restoredDate":"","restoredTime":"","imageUrl":"","imageName":"US Department of Justice LGBTQI Working Group 2025 web page before.jpg"},{"code":"","subtitle":"LGBTQI+ Policy","entity":"U.S. Department of Labor","url":"https://www.dol.gov/agencies/oasp/resources/lgbt-workers","date":"2025-01-15","time":"05:02:20","tag":"","summary":"This page provided information regarding the protection of LGBTQI+ worker with a link to related Executive Orders, a related National Stratgey, and various related resources.","note":"This page has been removed. The URL returns \"Page Not Found\".","wayback":"https://web.archive.org/web/20250115050220/https://www.dol.gov/agencies/oasp/resources/lgbt-workers","status":"removed","restoredDate":"","restoredTime":"","imageUrl":"","imageName":"US Department of Labor LGBTQI Policy 2025 web page before.jpg"}]}
+</script>
+
+<script>
+  var SHOW_DECAY = true;
+  var SHOW_TOTAL = true;
+  var DATA = {"generated":"2026-06-02T02:57:26.220Z","links":[{"code":"","subtitle":"LGBTQ Pride","entity":"NASA","url":"https://www.nasa.gov/lgbtq-pride","lastSeenAlive":"2025-02-02","lastSeenTime":"08:44:04","tag":"","summary":"This page had a \"LGBTQ Pride\" gallery, a video celebrating Pride Month in 2022, links to content related to NASA and LGBTQ Pride, and links to general topics at NASA.","note":"This page has been removed. The URL returns a 404 status code.","wayback":"https://web.archive.org/web/20250202084404/https://www.nasa.gov/lgbtq-pride/","status":"removed","restoredDate":"","restoredTime":"","image":"images/NASA LGBTQ Pride 2025 web page before.jpg"},{"code":"","subtitle":"Interpretative Flags","entity":"National Park Service","url":"https://www.nps.gov/ston/learn/photosmultimedia/interpretative-flags.htm","lastSeenAlive":"2025-02-12","lastSeenTime":"13:10:41","tag":"","summary":"This page has an image and description of the \"interpretive flag display featuring the rainbow Pride flag\".","note":"The following text has been removed from the image description: rainbow, LGBTQ+. This removal was phased. 13/02/25 LGBTQ changes to LGBQ. 14/02/25 LGBQ changes to LGB. 21/02/25 LGB and rainbow is removed.","wayback":"https://web.archive.org/web/20250212011041/https://www.nps.gov/ston/learn/photosmultimedia/interpretative-flags.htm","status":"removed","restoredDate":"","restoredTime":"","image":"images/National Park Service Interpretative Flags 2025 web page before.jpg"},{"code":"","subtitle":"LGBTQ+ Flags","entity":"National Park Service","url":"https://www.nps.gov/articles/000/lgbtq-flags.htm","lastSeenAlive":"2025-02-10","lastSeenTime":"16:45:24","tag":"","summary":"This page had an article on \"LGBTQ+ Flags\".","note":"This page has been removed. The URL returns a 404 status code. This removal was phased. 11/02/25 the page is removed and the URL return a \"Page In-Progress\" message.","wayback":"https://web.archive.org/web/20250210164524/https://www.nps.gov/articles/000/lgbtq-flags.htm","status":"removed","restoredDate":"","restoredTime":"","image":"images/National Park Service LGBTQ Flags 2025 web page before.jpg"},{"code":"","subtitle":"Marsha P. Johnson","entity":"National Park Service","url":"https://www.nps.gov/people/marsha-p-johnson.htm","lastSeenAlive":"2025-02-16","lastSeenTime":"21:10:16","tag":"","summary":"This page had a biography for Marsha P. Johnson, including a photo.","note":"This page has been removed. The URL returns a 404 status code.","wayback":"https://web.archive.org/web/20250216211016/https://www.nps.gov/people/marsha-p-johnson.htm","status":"removed","restoredDate":"","restoredTime":"","image":"images/National Park Service Marsha P Johnson 2025 web page before.jpg"},{"code":"","subtitle":"A place for everyone","entity":"U.S. Army","url":"https://www.army.mil/article/276642/a_place_for_everyone","lastSeenAlive":"2025-02-03","lastSeenTime":"10:18:39","tag":"","summary":"This page had an article celebrating Pride Month in 2024 and links to related stories. The article included text and photos on Marsha P. Johnson and queer advocates working in the US government.","note":"This page has been removed. The URL returns a 404 status code.","wayback":"https://web.archive.org/web/20250203101839/https://www.army.mil/article/276642/a_place_for_everyone","status":"removed","restoredDate":"","restoredTime":"","image":"images/US Army A Place For Everyone 2025 web page before.jpg"},{"code":"","subtitle":"Sexual Orientation & Gender Identity (SOGI)","entity":"United States Census Bureau","url":"https://www.census.gov/topics/population/sexual-orientation-gender-identity.html","lastSeenAlive":"2025-02-01","lastSeenTime":"00:38:19","tag":"","summary":"This page described and had a link to the \"Sexual Orientation and Gender Identity (SOGI) Data Action Plan\", related articles, general news, general stories, a related visualisation, related working papers, and other subtopics.","note":"This page has been removed. The URL returns a 404 status code.","wayback":"https://web.archive.org/web/20250201003819/https://www.census.gov/topics/population/sexual-orientation-gender-identity.html","status":"removed","restoredDate":"","restoredTime":"","image":"images/US Census Bureau SOGI 2025 web page before.jpg"},{"code":"","subtitle":"LGBTQI+ Working Group","entity":"U.S. Department of Justice","url":"https://www.justice.gov/crt/lgbtqi-working-group","lastSeenAlive":"2025-01-23","lastSeenTime":"21:30:42","tag":"","summary":"This page provided information on a \"LGBTQI+ Working Group\" that was part of the Civil Rights Division of the U.S. Department of Justice.","note":"This page has been removed. The URL returns a 404 status code.","wayback":"https://web.archive.org/web/20250123213042/https://www.justice.gov/crt/lgbtqi-working-group","status":"removed","restoredDate":"","restoredTime":"","image":"images/US Department of Justice LGBTQI Working Group 2025 web page before.jpg"},{"code":"","subtitle":"LGBTQI+ Policy","entity":"U.S. Department of Labor","url":"https://www.dol.gov/agencies/oasp/resources/lgbt-workers","lastSeenAlive":"2025-01-15","lastSeenTime":"05:02:20","tag":"","summary":"This page provided information regarding the protection of LGBTQI+ worker with a link to related Executive Orders, a related National Stratgey, and various related resources.","note":"This page has been removed. The URL returns \"Page Not Found\".","wayback":"https://web.archive.org/web/20250115050220/https://www.dol.gov/agencies/oasp/resources/lgbt-workers","status":"removed","restoredDate":"","restoredTime":"","image":"images/US Department of Labor LGBTQI Policy 2025 web page before.jpg"}]};
+
+  function toMs(d, tm){
+    // date string + optional "HH:MM"/"HH:MM:SS" -> timestamp, or null
+    if(!d) return null;
+    var time = tm && /^\d{2}:\d{2}/.test(tm)
+      ? (tm.length === 5 ? tm + ':00' : tm)
+      : '00:00:00';
+    return new Date(d+"T"+time).getTime();
+  }
+  function breakdown(ms){
+    if(ms < 0) ms = 0;
+    var t = Math.floor(ms/1000);
+    return { days:Math.floor(t/86400), h:Math.floor(t/3600)%24,
+             m:Math.floor(t/60)%60, s:t%60 };
+  }
+  function elapsed(d, tm){
+    var start = toMs(d, tm);
+    if(start === null) return null;
+    return breakdown(Date.now() - start);
+  }
+  // duration between last-present and a fixed restored moment (frozen)
+  function frozenElapsed(d, tm, rd, rtm){
+    var start = toMs(d, tm), end = toMs(rd, rtm);
+    if(start === null || end === null) return null;
+    return breakdown(end - start);
+  }
+  function pad(n){ return (n<10?'0':'')+n; }
+  function ageBucket(n){
+    if(n<365)return 0; if(n<1095)return 1;
+    if(n<2190)return 2; if(n<3650)return 3; return 4;
+  }
+  function counterHTML(e){
+    return '<span class="seg">'+e.days.toLocaleString()+'<span class="u">d</span></span>'+
+           '<span class="seg">'+pad(e.h)+'<span class="u">h</span></span>'+
+           '<span class="seg">'+pad(e.m)+'<span class="u">m</span></span>'+
+           '<span class="seg">'+pad(e.s)+'<span class="u">s</span></span>';
+  }
+
+  var tickers = [];
+  function tick(){
+    var total = 0;
+    for(var i=0;i<tickers.length;i++){
+      var e = elapsed(tickers[i].date, tickers[i].time);
+      if(!e) continue;
+      tickers[i].el.innerHTML = counterHTML(e);
+      total += e.days;
+    }
+    if(SHOW_TOTAL){
+      var tt = document.getElementById('total');
+      if(tt) tt.textContent = tickers.length+(tickers.length===1?' entry':' entries');
+    }
+  }
+
+  function openLightbox(src){
+    var lb=document.getElementById('lb');
+    document.getElementById('lb-img').src=src;
+    lb.classList.add('open');
+  }
+  document.getElementById('lb').addEventListener('click',function(){
+    this.classList.remove('open');
+  });
+
+  function render(data){
+    var list=document.getElementById('list');
+    list.innerHTML=''; tickers=[];
+
+    data.links.forEach(function(lk,i){
+      var restored = lk.status==='restored';
+      // frozen duration if restored, live duration otherwise
+      var e0 = restored
+        ? frozenElapsed(lk.lastSeenAlive, lk.lastSeenTime, lk.restoredDate, lk.restoredTime)
+        : elapsed(lk.lastSeenAlive, lk.lastSeenTime);
+      var days = e0 ? e0.days : 0;
+
+      // date, plus time appended only if the entry has one
+      var hasTime = lk.lastSeenTime && /^\d{2}:\d{2}/.test(lk.lastSeenTime);
+      var stamp = (lk.lastSeenAlive||'') +
+        (hasTime ? ' ' + (lk.lastSeenTime.length===5 ? lk.lastSeenTime+':00' : lk.lastSeenTime) : '');
+
+      var el=document.createElement('article');
+      el.className='entry'+(restored?' restored':(SHOW_DECAY&&e0?' age-'+ageBucket(days):''));
+      el.style.animationDelay=(i*0.07)+'s';
+
+      var counterStr, clabel, seenLabel, seenDates;
+      if(restored){
+        // counter frozen at the elapsed time up to restoration
+        counterStr = e0 ? counterHTML(e0) :
+          '<span class="seg">0<span class="u">d</span></span>'+
+          '<span class="seg">00<span class="u">h</span></span>'+
+          '<span class="seg">00<span class="u">m</span></span>'+
+          '<span class="seg">00<span class="u">s</span></span>';
+        var rHasTime = lk.restoredTime && /^\d{2}:\d{2}/.test(lk.restoredTime);
+        var rStamp = (lk.restoredDate||'') +
+          (rHasTime ? ' ' + (lk.restoredTime.length===5 ? lk.restoredTime+':00' : lk.restoredTime) : '');
+        clabel='content restored — counter frozen';
+        seenLabel='REMOVED / RESTORED';
+        seenDates=(stamp||'date not set')+(rStamp ? ' — '+rStamp : '');
+      } else if(!e0){
+        counterStr='—';
+        clabel='time since content removed';
+        seenLabel='LAST PRESENT';
+        seenDates='date not set';
+      } else {
+        counterStr=counterHTML(e0);
+        clabel='time since content removed';
+        seenLabel='LAST PRESENT';
+        seenDates=stamp;
+      }
+
+      var code = lk.code ? '<div class="ecode">'+lk.code+'</div>' : '';
+      var subtitle = lk.subtitle ? '<div class="esubtitle">'+lk.subtitle+'</div>' : '';
+      var entity = lk.entity ? '<div class="eentity">'+lk.entity+'</div>' : '';
+      var html =
+        (lk.image ? '<div class="snap"><img src="'+lk.image+'" alt="archived page snapshot" data-full="'+lk.image+'"><div class="scap">archived snapshot — click to enlarge</div></div>' : '')+
+        code+
+        subtitle+
+        entity+
+        '<a class="url" href="'+lk.url+'" target="_blank" rel="noopener noreferrer">'+lk.url+'</a>'+
+        (lk.tag ? '<span class="mech">'+lk.tag+'</span>' : '')+
+        '<div class="clabel">'+clabel+'</div>'+
+        '<div class="counter">'+counterStr+'</div>'+
+        (lk.summary ? '<div class="summary"><span class="nlabel">Page summary</span>'+lk.summary+'</div>' : '')+
+        (lk.note ? '<div class="note"><span class="nlabel">What changed</span>'+lk.note+'</div>' : '')+
+        '<div class="seen">'+
+          '<span class="seen-label">'+seenLabel+'</span>'+
+          '<span class="seen-dates">'+seenDates+'</span>'+
+          (lk.wayback ? '<a class="seen-wb" href="'+lk.wayback+'" target="_blank" rel="noopener noreferrer">View original (Wayback Machine)</a>' : '')+
+        '</div>';
+      el.innerHTML = html;
+      list.appendChild(el);
+
+      var snapImg = el.querySelector('.snap img');
+      if(snapImg){
+        snapImg.addEventListener('click',function(){
+          openLightbox(this.getAttribute('data-full'));
+        });
+      }
+
+      if(!restored && e0){
+        tickers.push({ el: el.querySelector('.counter'),
+                       date: lk.lastSeenAlive, time: lk.lastSeenTime });
+      }
+    });
+
+    tick();
+    if(window._cr) clearInterval(window._cr);
+    if(tickers.length) window._cr = setInterval(tick, 1000);
+  }
+
+  // ---- view toggle (desktop) ----
+  function setView(v){
+    var list=document.getElementById('list');
+    if(v==='tiles') list.classList.add('tiles');
+    else list.classList.remove('tiles');
+    var btns=document.querySelectorAll('.viewbar button');
+    for(var i=0;i<btns.length;i++){
+      btns[i].classList.toggle('on', btns[i].getAttribute('data-v')===v);
+    }
+  }
+  (function(){
+    var btns=document.querySelectorAll('.viewbar button');
+    for(var i=0;i<btns.length;i++){
+      btns[i].addEventListener('click',function(){
+        setView(this.getAttribute('data-v'));
+      });
+    }
+    setView('tiles');
+  })();
+
+  // ---- sort (viewer) ----
+  function sortFor(links, mode){
+    function ms(l){
+      var start = toMs(l.lastSeenAlive, l.lastSeenTime);
+      if(start === null) return -1;
+      var end = (l.status==='restored')
+        ? toMs(l.restoredDate, l.restoredTime)
+        : Date.now();
+      if(end === null) return -1;
+      return Math.max(0, end - start);
+    }
+    function cmp(a,b,key){
+      return (a[key]||'').localeCompare(b[key]||'',undefined,{sensitivity:'base'});
+    }
+    var s = links.slice();
+    if(mode==='longest') s.sort(function(a,b){return ms(b)-ms(a);});
+    else if(mode==='shortest') s.sort(function(a,b){return ms(a)-ms(b);});
+    else if(mode==='az') s.sort(function(a,b){return cmp(a,b,'subtitle');});
+    else if(mode==='za') s.sort(function(a,b){return cmp(b,a,'subtitle');});
+    else if(mode==='entity-az') s.sort(function(a,b){return cmp(a,b,'entity');});
+    else if(mode==='entity-za') s.sort(function(a,b){return cmp(b,a,'entity');});
+    return s;
+  }
+
+  function applySort(mode){
+    render({ generated: DATA.generated, links: sortFor(DATA.links, mode) });
+  }
+
+  (function(){
+    var sb=document.getElementById('sortbar');
+    if(sb){
+      sb.addEventListener('change',function(){ applySort(this.value); });
+    }
+    // default: longest duration
+    applySort('longest');
+  })();
+</script>
+</body>
+</html>
